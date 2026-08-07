@@ -237,6 +237,83 @@
 
   /* ------------------------------------------------- before/after sliders */
 
+  /* Each project is one "before" photo compared against any number of
+     "after" photos. To add more, drop filenames into the `after` array —
+     the thumbnail strip and the slider pick them up automatically. */
+  var PROJECTS = [
+    {
+      label: 'Kitchen',
+      before: 'img/before-1.webp',
+      after: ['img/after-1.webp', 'img/after-2.webp']
+    },
+    {
+      label: 'Bathroom',
+      before: 'img/before-2.webp',
+      after: ['img/after-3.webp', 'img/after-4.webp']
+    }
+  ];
+
+  function buildProject(project, index) {
+    var block = document.createElement('div');
+    block.className = 'project-block';
+    block.setAttribute('data-reveal', '');
+
+    var thumbs = project.after.map(function (src, i) {
+      return '<button type="button" class="compare-thumb" data-after="' + src + '" ' +
+             'aria-pressed="' + (i === 0) + '" ' +
+             'aria-label="' + project.label + ' after photo ' + (i + 1) + '">' +
+             '<img src="' + src + '" alt="" loading="lazy"></button>';
+    }).join('');
+
+    block.innerHTML =
+      '<div class="compare-shell">' +
+        '<div class="compare" data-compare>' +
+          '<img data-compare-after src="' + project.after[0] + '" ' +
+               'alt="' + project.label + ' after renovation" draggable="false">' +
+          '<div class="compare__before" data-compare-clip>' +
+            '<img src="' + project.before + '" alt="' + project.label +
+                 ' before renovation" draggable="false">' +
+            '<div class="compare__tag compare__tag--before">Before</div>' +
+          '</div>' +
+          '<div class="compare__tag compare__tag--after">After</div>' +
+          '<div class="compare__bar" data-compare-bar></div>' +
+          '<div class="compare__knob" data-compare-knob role="slider" tabindex="0" ' +
+               'aria-label="' + project.label + ' before and after wipe" ' +
+               'aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">↔</div>' +
+        '</div>' +
+      '</div>' +
+      (project.after.length > 1
+        ? '<div class="compare-thumbs" role="group" aria-label="' + project.label +
+          ' after photos">' + thumbs + '</div>'
+        : '');
+
+    // Swap which "after" photo the slider reveals.
+    var main = block.querySelector('[data-compare-after]');
+    block.addEventListener('click', function (e) {
+      var thumb = e.target.closest('.compare-thumb');
+      if (!thumb) return;
+      main.src = thumb.getAttribute('data-after');
+      block.querySelectorAll('.compare-thumb').forEach(function (t) {
+        t.setAttribute('aria-pressed', String(t === thumb));
+      });
+    });
+
+    initCompare(block.querySelector('[data-compare]'));
+    return block;
+  }
+
+  function renderProjects() {
+    var root = document.getElementById('project-comparisons');
+    if (!root || root.childElementCount) return;
+    PROJECTS.forEach(function (p, i) { root.appendChild(buildProject(p, i)); });
+  }
+
+  // Keep the handle a sliver away from the edges so it stays grabbable.
+  function clampPct(value) { return Math.max(2, Math.min(98, value)); }
+
+  var WIPE_KEYS = { ArrowLeft: -4, ArrowRight: 4, Home: -100, End: 100 };
+  function wipeStepFor(key) { return WIPE_KEYS[key] || 0; }
+
   function initCompare(root) {
     var clip = root.querySelector('[data-compare-clip]');
     var bar = root.querySelector('[data-compare-bar]');
@@ -247,11 +324,12 @@
       clip.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
       bar.style.left = pct + '%';
       knob.style.left = pct + '%';
+      knob.setAttribute('aria-valuenow', Math.round(pct));
     }
 
     function moveTo(clientX) {
       var rect = root.getBoundingClientRect();
-      pct = Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
+      pct = clampPct(((clientX - rect.left) / rect.width) * 100);
       paint();
     }
 
@@ -269,11 +347,18 @@
       window.addEventListener('pointerup', onUp);
     });
 
+    knob.addEventListener('keydown', function (ev) {
+      var step = wipeStepFor(ev.key);
+      if (!step) return;
+      ev.preventDefault();
+      pct = clampPct(pct + step);
+      paint();
+    });
+
     paint();
   }
 
-  var compares = document.querySelectorAll('[data-compare]');
-  for (var c = 0; c < compares.length; c++) initCompare(compares[c]);
+  renderProjects();
 
   /* ------------------------------------------------------------ the form */
 
