@@ -194,7 +194,7 @@ input, textarea, button, select { font-family: inherit; }
 }
 
 .site-header__logo {
-  height: 72px;
+  height: 104px;
   width: auto;
   mix-blend-mode: multiply;
   flex: none;
@@ -358,7 +358,7 @@ main { animation: pageIn .5s var(--ease) both; }
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 26px;
 }
 .metric {
@@ -873,7 +873,8 @@ main { animation: pageIn .5s var(--ease) both; }
 .contact-lines {
   margin-top: 34px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* Cards must stay wide enough to hold the longest email on one line. */
+  grid-template-columns: repeat(auto-fit, minmax(262px, 1fr));
   gap: 14px;
 }
 .contact-line {
@@ -884,7 +885,7 @@ main { animation: pageIn .5s var(--ease) both; }
 }
 .contact-line:hover { border-color: rgba(32, 157, 80, .5); background: rgba(32, 157, 80, .05); }
 .contact-line__k { font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-.contact-line__v { display: block; margin-top: 7px; font-size: 16.5px; font-weight: 700; color: var(--green-dark); word-break: break-word; }
+.contact-line__v { display: block; margin-top: 7px; font-size: 16px; font-weight: 700; color: var(--green-dark); white-space: nowrap; }
 
 .form {
   margin-top: 36px;
@@ -1021,9 +1022,10 @@ main { animation: pageIn .5s var(--ease) both; }
   .nav__link { text-align: left; padding: 13px 14px; font-size: 16px; }
 
   .nav-toggle { display: inline-flex; }
-  .site-header { position: relative; }
+  /* Header stays sticky here too — `position: sticky` is still a positioned
+     ancestor, so the absolutely-positioned dropdown anchors to it correctly. */
   .site-header__inner { gap: 14px; }
-  .site-header__logo { height: 56px; }
+  .site-header__logo { height: 80px; }
   .header-cta { display: none; }
 
   .section { padding-top: 62px; padding-bottom: 62px; }

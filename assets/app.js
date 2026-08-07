@@ -285,35 +285,27 @@
       e.preventDefault();
 
       if (!form.checkValidity()) { form.reportValidity(); return; }
+      // Honeypot: real people never see this field, bots fill it in.
+      if (form.querySelector('[name="botcheck"]').checked) return;
 
-      var button = form.querySelector('button[type="submit"]');
-      var original = button.textContent;
-      button.disabled = true;
-      button.textContent = 'Sending…';
-      status.hidden = true;
+      var to = form.getAttribute('data-mailto');
+      var get = function (name) { return (form.querySelector('[name="' + name + '"]') || {}).value || ''; };
+
+      var name = (get('first_name') + ' ' + get('last_name')).trim();
+      var subject = 'Website enquiry from ' + name;
+      var body =
+        'Name: ' + name + '\n' +
+        'Email: ' + get('email') + '\n\n' +
+        get('message') + '\n';
+
+      window.location.href = 'mailto:' + to +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+
       status.className = 'form__status';
-
-      fetch(form.action, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(form)
-      })
-        .then(function (res) { return res.json().catch(function () { return {}; }).then(function (data) { return { ok: res.ok, data: data }; }); })
-        .then(function (result) {
-          if (!result.ok) throw new Error((result.data && result.data.message) || 'Request failed');
-          form.reset();
-          button.textContent = 'Message sent ✓';
-          status.textContent = 'Thank you — we will respond within one business day.';
-          status.hidden = false;
-        })
-        .catch(function () {
-          button.disabled = false;
-          button.textContent = original;
-          status.className = 'form__status form__status--error';
-          status.innerHTML = 'Something went wrong. Please email ' +
-            '<a href="mailto:info@superiorconstruc.com">info@superiorconstruc.com</a> instead.';
-          status.hidden = false;
-        });
+      status.innerHTML = 'Opening your email app… if nothing happens, write to ' +
+        '<a href="mailto:' + to + '">' + to + '</a>.';
+      status.hidden = false;
     });
   }
 
