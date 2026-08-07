@@ -11,8 +11,6 @@ delivery with in-house commissioning and energy expertise, so buildings are not
 only built to specification — they operate efficiently, reliably, and as
 intended.
 
-🔗 **[www.superiorconstructgroup.com](https://www.superiorconstructgroup.com)**
-
 ---
 
 ## What the site includes
@@ -73,54 +71,3 @@ Seven pages, each reachable from the main navigation.
 | General information | [info@superiorconstruc.com](mailto:info@superiorconstruc.com) |
 | Phone | [(202) 738-3036](tel:+12027383036) |
 | Service area | Maryland · Washington, DC · Northern Virginia |
-
----
-
-## For developers
-
-Plain HTML, CSS, and vanilla JavaScript. No framework, no build step, no
-dependencies — open `index.html` in a browser and it runs.
-
-```
-index.html          all seven pages, hash-routed (#/services, #/about, …)
-assets/styles.css   styling; brand colours and fonts are variables at the top
-assets/app.js       routing, animations, sliders, carousel, form handling
-img/                photography (WebP)
-docs/               downloadable PDF credentials
-```
-
-### Running locally
-
-```bash
-python -m http.server 5177
-```
-
-Then open <http://localhost:5177>.
-
-### Deploying
-
-Any static host works. Upload the folder — there is nothing to compile.
-
-When pointing a domain at a new host, change **only** the `A`, `AAAA`, and
-`CNAME` records. Leave `MX`, `TXT`/SPF, and `DKIM` records alone; those carry
-email, and removing them breaks mail delivery silently.
-
-### Editing content
-
-Text lives directly in `index.html`, grouped by page inside
-`<section class="page" data-page="…">` blocks. Colours and fonts are CSS
-variables at the top of `assets/styles.css`. Photos can be swapped by replacing
-files in `img/` under the same filenames — compress new ones at
-[squoosh.app](https://squoosh.app) (WebP, quality ~78) to keep pages fast.
-
-### Before launch
-
-Three placeholders still need real values:
-
-1. **Contact form key** — search `REPLACE_WITH_WEB3FORMS_ACCESS_KEY` in
-   `index.html`. Get a free key at [web3forms.com](https://web3forms.com).
-   Until it's set, the form shows an error and points visitors at the email
-   address instead.
-2. **LinkedIn URL** — search `REPLACE-WITH-SEIF-PROFILE` in `index.html`.
-3. **Documents** — the Qualifications page links to nine PDFs in `docs/`; see
-   the `href` values in `index.html` for the expected filenames.
