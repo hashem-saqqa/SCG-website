@@ -7,7 +7,7 @@
 
   var PAGES = ['home', 'services', 'markets', 'projects', 'qualifications', 'about', 'contact'];
   var TITLES = {
-    home:           'Superior Construct Group, LLC — General Contracting, MEP & Commissioning',
+    home:           'Superior Construct Group, LLC — General Contracting, MEP Design & Commissioning',
     services:       'Services — Construction & Engineering | Superior Construct Group',
     markets:        'Markets — Superior Construct Group',
     projects:       'Our Work — Superior Construct Group',
