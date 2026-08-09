@@ -242,15 +242,31 @@
      the thumbnail strip and the slider pick them up automatically. */
   var PROJECTS = [
     {
-      label: 'Kitchen',
-      before: 'img/before-1.webp',
-      after: ['img/after-1.webp', 'img/after-2.webp']
+      label: 'Kitchen renovation',
+      before: 'img/before1.webp',
+      after: ['img/after1_1.webp', 'img/after1_2.webp']
     },
     {
-      label: 'Bathroom',
-      before: 'img/before-2.webp',
-      after: ['img/after-3.webp', 'img/after-4.webp']
+      label: 'Bathroom renovation',
+      before: 'img/before2.webp',
+      after: ['img/after2_1.webp', 'img/after2_2.webp']
+    },
+    {
+      label: 'Garage conversion',
+      before: 'img/before3.webp',
+      after: ['img/after3_1.webp']
     }
+  ];
+
+  /* Finished work with no matching "before" shot. Shown as cards, no wipe.
+     Add an entry to put another photo on the page. */
+  var SHOWCASE = [
+    { src: 'img/after10.webp', title: 'Custom home exterior',        tag: 'New construction' },
+    { src: 'img/after5.webp',  title: 'Circular paver patio',        tag: 'Hardscaping' },
+    { src: 'img/after7.webp',  title: 'Poolside paver terrace',      tag: 'Hardscaping' },
+    { src: 'img/after8.webp',  title: 'Front entry and walkway',     tag: 'Exterior' },
+    { src: 'img/after9.webp',  title: 'Flagstone walkway',           tag: 'Exterior' },
+    { src: 'img/after6.webp',  title: 'Rear deck',                   tag: 'Exterior' }
   ];
 
   function buildProject(project, index) {
@@ -308,6 +324,26 @@
     PROJECTS.forEach(function (p, i) { root.appendChild(buildProject(p, i)); });
   }
 
+  function renderShowcase() {
+    var root = document.getElementById('project-showcase');
+    if (!root || root.childElementCount) return;
+
+    SHOWCASE.forEach(function (item) {
+      var card = document.createElement('figure');
+      card.className = 'work-card';
+      card.setAttribute('data-reveal', '');
+      card.innerHTML =
+        '<div class="work-card__media">' +
+          '<img src="' + item.src + '" alt="' + item.title + '" loading="lazy">' +
+        '</div>' +
+        '<figcaption class="work-card__body">' +
+          '<span class="work-card__tag">' + item.tag + '</span>' +
+          '<h3>' + item.title + '</h3>' +
+        '</figcaption>';
+      root.appendChild(card);
+    });
+  }
+
   // Keep the handle a sliver away from the edges so it stays grabbable.
   function clampPct(value) { return Math.max(2, Math.min(98, value)); }
 
@@ -359,6 +395,7 @@
   }
 
   renderProjects();
+  renderShowcase();
 
   /* ------------------------------------------------------------ the form */
 
