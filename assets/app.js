@@ -244,12 +244,12 @@
     {
       label: 'Kitchen renovation',
       before: 'img/before1.webp',
-      after: ['img/after1_1.webp', 'img/after1_2.webp']
+      after: ['img/after1_1.jpeg']
     },
     {
       label: 'Bathroom renovation',
       before: 'img/before2.webp',
-      after: ['img/after2_1.webp', 'img/after2_2.webp']
+      after: ['img/after2_1.jpeg']
     },
     {
       label: 'Garage conversion',
