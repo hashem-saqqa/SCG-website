@@ -261,12 +261,12 @@
   /* Finished work with no matching "before" shot. Shown as cards, no wipe.
      Add an entry to put another photo on the page. */
   var SHOWCASE = [
-    { src: 'img/after10.webp', title: 'Custom home exterior',        tag: 'New construction' },
-    { src: 'img/after5.webp',  title: 'Circular paver patio',        tag: 'Hardscaping' },
-    { src: 'img/after7.webp',  title: 'Poolside paver terrace',      tag: 'Hardscaping' },
-    { src: 'img/after8.webp',  title: 'Front entry and walkway',     tag: 'Exterior' },
-    { src: 'img/after9.webp',  title: 'Flagstone walkway',           tag: 'Exterior' },
-    { src: 'img/after6.webp',  title: 'Rear deck',                   tag: 'Exterior' }
+    { src: 'img/after9.webp', title: 'Custom home exterior',    tag: 'New construction' },
+    { src: 'img/after4.webp', title: 'Circular paver patio',    tag: 'Hardscaping' },
+    { src: 'img/after6.webp', title: 'Poolside paver terrace',  tag: 'Hardscaping' },
+    { src: 'img/after7.webp', title: 'Front entry and walkway', tag: 'Exterior' },
+    { src: 'img/after8.webp', title: 'Flagstone walkway',       tag: 'Exterior' },
+    { src: 'img/after5.webp', title: 'Rear deck',               tag: 'Exterior' }
   ];
 
   function buildProject(project, index) {

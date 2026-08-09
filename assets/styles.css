@@ -272,7 +272,7 @@ main { animation: pageIn .5s var(--ease) both; }
 .hero__glow { position: absolute; inset: 0; }
 
 .hero__media {
-  background: url('../img/after8.webp') center / cover no-repeat;
+  background: url('../img/after7.webp') center / cover no-repeat;
   opacity: .30;
   filter: saturate(.55) contrast(.95);
 }
