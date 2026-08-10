@@ -32,6 +32,8 @@
     for (var i = 0; i < sections.length; i++) {
       sections[i].hidden = sections[i].getAttribute('data-page') !== id;
     }
+    var hero = document.querySelector('[data-page]:not([hidden]) .hero__media');
+    if (hero) hero.style.transform = '';
 
     var links = document.querySelectorAll('.nav__link');
     for (var j = 0; j < links.length; j++) {
@@ -58,7 +60,29 @@
     if (id === 'home') startCounters();
   }
 
-  function route() { showPage(pageFromHash()); }
+  /* On navigation the current page lifts out before the next one fades in.
+     `pending` keeps rapid clicks from stacking half-finished transitions. */
+  var LEAVE_MS = 180;
+  var pending = null;
+  var booted = false;
+
+  function route() {
+    var next = pageFromHash();
+    var main = document.getElementById('main');
+
+    if (!booted || prefersReduced || !main) {
+      booted = true;
+      showPage(next);
+      return;
+    }
+
+    window.clearTimeout(pending);
+    main.classList.add('is-leaving');
+    pending = window.setTimeout(function () {
+      main.classList.remove('is-leaving');
+      showPage(next);
+    }, LEAVE_MS);
+  }
 
   window.addEventListener('hashchange', route);
 
@@ -87,52 +111,92 @@
 
   var observer = null;
 
+  function showAll(nodes) {
+    for (var i = 0; i < nodes.length; i++) nodes[i].classList.add('is-visible');
+  }
+
+  /* Items sharing a parent animate as a group, each one a beat behind the
+     last, so a row of cards cascades instead of all landing at once. */
+  function staggerDelay(node, seen) {
+    var key = node.parentNode;
+    var index = seen.get(key) || 0;
+    seen.set(key, index + 1);
+    return Math.min(index, 5) * 80;
+  }
+
   function setupReveal() {
     var nodes = document.querySelectorAll('[data-page]:not([hidden]) [data-reveal]');
     if (observer) observer.disconnect();
 
     if (prefersReduced || !('IntersectionObserver' in window)) {
-      for (var k = 0; k < nodes.length; k++) {
-        nodes[k].style.opacity = '1';
-        nodes[k].style.transform = 'none';
-      }
+      showAll(nodes);
       return;
     }
 
     observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'none';
+        entry.target.classList.add('is-visible');
         observer.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
 
+    var seen = new Map();
     for (var i = 0; i < nodes.length; i++) {
       var node = nodes[i];
-      var delay = (i % 4) * 60;
-      node.style.transition =
-        'opacity .66s cubic-bezier(.2,.7,.2,1) ' + delay + 'ms, ' +
-        'transform .66s cubic-bezier(.2,.7,.2,1) ' + delay + 'ms';
+      node.classList.remove('is-visible');
+      node.style.setProperty('--reveal-delay', staggerDelay(node, seen) + 'ms');
 
       if (node.getBoundingClientRect().top < window.innerHeight * 0.94) {
-        node.style.opacity = '1';
-        node.style.transform = 'none';
+        node.classList.add('is-visible');
       } else {
-        node.style.opacity = '0';
-        node.style.transform = 'translateY(26px)';
         observer.observe(node);
       }
     }
 
     // Safety net: never leave content invisible if the observer misfires.
     window.clearTimeout(setupReveal.safety);
-    setupReveal.safety = window.setTimeout(function () {
-      for (var n = 0; n < nodes.length; n++) {
-        nodes[n].style.opacity = '1';
-        nodes[n].style.transform = 'none';
+    setupReveal.safety = window.setTimeout(function () { showAll(nodes); }, 4000);
+  }
+
+  /* -------------------------------------------------------- scroll effects */
+
+  /* One passive listener drives the progress bar, the header state and the
+     hero parallax, with the reads batched into a single frame. */
+  function initScrollEffects() {
+    var header = document.querySelector('.site-header');
+    var bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    document.body.appendChild(bar);
+
+    var ticking = false;
+
+    function paint() {
+      ticking = false;
+      var y = window.pageYOffset || document.documentElement.scrollTop;
+
+      var scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = scrollable > 0 ? Math.min(1, y / scrollable) : 0;
+      bar.style.transform = 'scaleX(' + progress + ')';
+
+      header.classList.toggle('is-scrolled', y > 40);
+
+      if (prefersReduced) return;
+      var media = document.querySelector('[data-page]:not([hidden]) .hero__media');
+      if (media && y < window.innerHeight * 1.5) {
+        media.style.transform = 'translate3d(0,' + (y * 0.18) + 'px,0)';
       }
-    }, 4000);
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(paint);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    paint();
   }
 
   /* ------------------------------------------------------------- counters */
@@ -331,7 +395,7 @@
     SHOWCASE.forEach(function (item) {
       var card = document.createElement('figure');
       card.className = 'work-card';
-      card.setAttribute('data-reveal', '');
+      card.setAttribute('data-reveal', 'zoom');
       card.innerHTML =
         '<div class="work-card__media">' +
           '<img src="' + item.src + '" alt="' + item.title + '" loading="lazy">' +
@@ -436,5 +500,9 @@
   var year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  // Only hide reveal targets once we know the script is running.
+  if (!prefersReduced) document.documentElement.classList.add('reveal-ready');
+
+  initScrollEffects();
   route();
 })();

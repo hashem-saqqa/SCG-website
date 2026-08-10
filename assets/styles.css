@@ -71,7 +71,50 @@ input, textarea, button, select { font-family: inherit; }
 @keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes popIn   { from { opacity: 0; transform: scale(.94) translateY(10px); } to { opacity: 1; transform: none; } }
 
-[data-reveal] { will-change: opacity, transform; }
+/* Reveal-on-scroll.
+   The hidden state only applies once JS has flagged the document, so if the
+   script fails or is blocked the content still renders normally. */
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity .7s var(--ease) var(--reveal-delay, 0ms),
+    transform .7s var(--ease) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+/* Sideways reveals start outside the viewport edge, so the page must clip
+   them. `clip` rather than `hidden`: it does not create a scroll container,
+   which would break the sticky header and the sticky contact image. */
+[data-page] { overflow-x: clip; }
+
+.reveal-ready [data-reveal="left"]  { transform: translateX(-46px); }
+.reveal-ready [data-reveal="right"] { transform: translateX(46px); }
+.reveal-ready [data-reveal="zoom"]  { transform: scale(.93); }
+.reveal-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--green), var(--green-light));
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* Page change: brief lift-out before the new page fades in */
+main.is-leaving {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity .18s ease, transform .18s ease;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -79,6 +122,8 @@ input, textarea, button, select { font-family: inherit; }
     animation-duration: .001ms !important;
     transition-duration: .001ms !important;
   }
+  .reveal-ready [data-reveal] { opacity: 1; transform: none; }
+  .scroll-progress { display: none; }
 }
 
 /* ---------- typography ---------------------------------------------------- */
@@ -183,6 +228,11 @@ input, textarea, button, select { font-family: inherit; }
   background: rgba(225, 223, 217, .92);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(22, 33, 26, .09);
+  transition: box-shadow .3s ease, background .3s ease;
+}
+.site-header.is-scrolled {
+  background: rgba(225, 223, 217, .97);
+  box-shadow: 0 10px 30px rgba(22, 33, 26, .12);
 }
 
 .site-header__inner {
@@ -191,14 +241,18 @@ input, textarea, button, select { font-family: inherit; }
   gap: 32px;
   padding-top: 14px;
   padding-bottom: 14px;
+  transition: padding .3s var(--ease);
 }
+.is-scrolled .site-header__inner { padding-top: 7px; padding-bottom: 7px; }
 
 .site-header__logo {
   height: 104px;
   width: auto;
   mix-blend-mode: multiply;
   flex: none;
+  transition: height .3s var(--ease);
 }
+.is-scrolled .site-header__logo { height: 68px; }
 
 .nav {
   display: flex;
@@ -275,6 +329,10 @@ main { animation: pageIn .5s var(--ease) both; }
   background: url('../img/after7.webp') center / cover no-repeat;
   opacity: .30;
   filter: saturate(.55) contrast(.95);
+  /* Oversized so the parallax shift never exposes an edge. */
+  top: -14%;
+  height: 128%;
+  will-change: transform;
 }
 .hero__scrim {
   background: linear-gradient(100deg, #16211a 22%, rgba(22, 33, 26, .72) 58%, rgba(22, 33, 26, .30) 100%);
@@ -1100,6 +1158,7 @@ main { animation: pageIn .5s var(--ease) both; }
      ancestor, so the absolutely-positioned dropdown anchors to it correctly. */
   .site-header__inner { gap: 14px; }
   .site-header__logo { height: 80px; }
+  .is-scrolled .site-header__logo { height: 56px; }
   .header-cta { display: none; }
 
   .section { padding-top: 62px; padding-bottom: 62px; }
