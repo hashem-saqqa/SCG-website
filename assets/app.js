@@ -312,8 +312,8 @@
     },
     {
       label: 'Bathroom renovation',
-      before: 'img/before2.webp',
-      after: ['img/after2_1.jpeg']
+      before: 'img/before2.jpeg',
+      after: ['img/after2_1.webp']
     },
     {
       label: 'Garage conversion',
