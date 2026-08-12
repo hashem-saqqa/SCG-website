@@ -1,0 +1,30 @@
+# Cloudflare Pages response headers.
+# Syntax: a path pattern, then indented "Header: value" lines.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  # No includeSubDomains: it would force HTTPS on every future subdomain too,
+  # which is a hard commitment to undo once browsers have cached it.
+  Strict-Transport-Security: max-age=31536000
+
+# index.html must always be revalidated, otherwise a content edit can sit
+# behind a stale cache for hours.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Filenames here are not content-hashed and photos get replaced under the
+# same name, so a day is as long as it is safe to cache them.
+/assets/*
+  Cache-Control: public, max-age=86400
+
+/img/*
+  Cache-Control: public, max-age=86400
+
+/docs/*
+  Cache-Control: public, max-age=86400
