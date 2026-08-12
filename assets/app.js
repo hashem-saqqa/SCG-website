@@ -240,11 +240,11 @@
 
   var QUOTES = [
     {
-      text: '“I recently worked with SCG on a remodel project. From start to finish his professionalism was evident. The team was punctual, skilled, and attentive to detail, as well as extremely communicative and responsive. He exceeded my expectations in every way and I highly recommend him.”',
+      text: '“I recently worked with SCG on a remodel project. From start to finish their professionalism was evident. The team was punctual, skilled, and attentive to detail, as well as extremely communicative and responsive. They exceeded my expectations in every way and I highly recommend them.”',
       author: 'Amy'
     },
     {
-      text: '“When I saw what SCG was doing with my neighbor’s bathroom renovation, I decided to have my own done using him. His bid was very reasonable, so I hired him. He ended up doing three of my bathrooms as well as my TV room and kitchen. His work is amazing. He is very receptive to customer requests on ongoing projects, as well as being clean, cooperative and conscientious — not to mention a great guy to work with. He is still doing work for me. Five stars.”',
+      text: '“When I saw what SCG was doing with my neighbor’s bathroom renovation, I decided to have my own done using them. Their bid was very reasonable, so I hired them. They ended up doing three of my bathrooms as well as my TV room and kitchen. Their work is amazing. They were very receptive to customer requests on ongoing projects, as well as being clean, cooperative and conscientious — not to mention a great team to work with. They are still doing work for me. Five stars.”',
       author: 'Mark Green'
     },
     {
@@ -319,18 +319,22 @@
       label: 'Garage conversion',
       before: 'img/before3.webp',
       after: ['img/after3_1.webp']
+    },
+    {
+      label: 'Deck rebuild',
+      before: 'img/before4.webp',
+      after: ['img/after4.jpeg']
     }
   ];
 
   /* Finished work with no matching "before" shot. Shown as cards, no wipe.
      Add an entry to put another photo on the page. */
   var SHOWCASE = [
-    { src: 'img/after9.webp', title: 'Custom home exterior',    tag: 'New construction' },
+    { src: 'img/after8.webp', title: 'Custom home exterior',    tag: 'New construction' },
     { src: 'img/after4.webp', title: 'Circular paver patio',    tag: 'Hardscaping' },
-    { src: 'img/after6.webp', title: 'Poolside paver terrace',  tag: 'Hardscaping' },
-    { src: 'img/after7.webp', title: 'Front entry and walkway', tag: 'Exterior' },
-    { src: 'img/after8.webp', title: 'Flagstone walkway',       tag: 'Exterior' },
-    { src: 'img/after5.webp', title: 'Rear deck',               tag: 'Exterior' }
+    { src: 'img/after5.webp', title: 'Poolside paver terrace',  tag: 'Hardscaping' },
+    { src: 'img/after6.webp', title: 'Front entry and walkway', tag: 'Exterior' },
+    { src: 'img/after7.webp', title: 'Flagstone walkway',       tag: 'Exterior' }
   ];
 
   function buildProject(project, index) {
